@@ -8,7 +8,7 @@ from alembic import context
 from app.config import config_by_name
 
 # Get the environment
-env = os.environ.get('APP_ENV', 'dev')
+env = os.environ.get("APP_ENV", "dev")
 
 # Load the correct configuration based on the environment
 postgres_config = config_by_name.get(env)
@@ -75,9 +75,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

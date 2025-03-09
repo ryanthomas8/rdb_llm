@@ -12,9 +12,11 @@ import json
 # Initialize FastAPI app
 app = FastAPI()
 
+
 # Pydantic model to handle the user input
 class QueryRequest(BaseModel):
     question: str
+
 
 # Initialize database connection
 db = SQLDatabase.from_uri(os.getenv("DATABASE_URL_DEV", None))
@@ -72,6 +74,7 @@ Based ONLY on the User Question and SQL result above, provide a clear and direct
 """
 )
 
+
 # FastAPI endpoint to handle user query
 @app.post("/ask")
 async def ask_user(query_request: QueryRequest):
@@ -98,12 +101,14 @@ async def ask_user(query_request: QueryRequest):
     try:
         final_answer = (answer_prompt | llm | StrOutputParser()).invoke(formatted_input)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error generating answer: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error generating answer: {str(e)}"
+        )
 
     # Return SQL Query and Final Answer
     return {
         "question": user_question,
         "sql_query": query,
         "query_result": formatted_result,
-        "final_answer": final_answer
+        "final_answer": final_answer,
     }

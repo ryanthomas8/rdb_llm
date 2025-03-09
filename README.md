@@ -105,8 +105,15 @@ Enter in the following payload for the /ask POST endpoint
 
 ## Other:
 
-Quickly query postgress database
+Quickly query postgress database:
 
 ```bash
 docker exec -it some-postgres psql -U postgres
+```
+
+Python formatting:
+
+```bash
+pip install -r requirements-dev.txt
+black . 
 ```
