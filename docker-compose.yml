@@ -1,0 +1,44 @@
+services:
+  rdb_llm_query:
+    build: .
+    container_name: rdb_llm_query
+    ports:
+      - "8000:8000" 
+    environment:
+      - OLLAMA_URL=${OLLAMA_URL}  # Use environment variable for Ollama URL
+      - OLLAMA_API_KEY=${OLLAMA_API_KEY}  # Use environment variable for Ollama API key
+      - DATABASE_URL_DEV=${DATABASE_URL_DEV}  # Use environment variable for the database URL
+    depends_on:
+      - postgres
+      - ollama
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres
+    container_name: postgres-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    runtime: nvidia
+    ports:
+      - "11434:11434"
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

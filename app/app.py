@@ -60,14 +60,16 @@ execute_query = QuerySQLDatabaseTool(db=db, top_k=10)
 answer_prompt = PromptTemplate.from_template(
     """You are an AI assistant helping answer questions using SQL query results. 
 Follow these rules:
-- Provide clear, concise answers.
-- If the SQL result is empty, respond with "No relevant data found."
-- If multiple rows are returned, summarize the key insights.
+- The SQL result **may be a subset of the full data**, but always generate an answer based **only on what is provided**.
+- Do NOT suggest modifying the SQL query or needing more data. Assume this is all that is available.
+- If multiple rows are returned, summarize them concisely.
 
 User Question: {question}
 SQL Query: {query}
 SQL Result: {result}
-Answer:"""
+
+Based ONLY on the User Question and SQL result above, provide a clear and direct answer:
+"""
 )
 
 # FastAPI endpoint to handle user query
@@ -83,7 +85,7 @@ async def ask_user(query_request: QueryRequest):
     # Step 2: Execute the SQL Query
     try:
         result = execute_query.invoke(query)
-        formatted_result = json.dumps(result, indent=2)  # Ensure structured format
+        formatted_result = json.dumps(result, indent=2)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error executing query: {str(e)}")
 
@@ -102,5 +104,6 @@ async def ask_user(query_request: QueryRequest):
     return {
         "question": user_question,
         "sql_query": query,
+        "query_result": formatted_result,
         "final_answer": final_answer
     }

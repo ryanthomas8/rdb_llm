@@ -1,4 +1,4 @@
-"""create user table
+"""create all tables
 
 Revision ID: c1f658da483f
 Revises: 
@@ -18,13 +18,13 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade():
+    # Create the department table first
     op.create_table(
-        'user',
+        'department',
         sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('name', sa.String(50), nullable=False),
-        sa.Column('description', sa.Unicode(200)),
-        sa.Column('birthday', sa.DateTime)
+        sa.Column('name', sa.String(100), nullable=False, unique=True),
     )
 
+
 def downgrade():
-    op.drop_table('user')
+    op.drop_table('department')
